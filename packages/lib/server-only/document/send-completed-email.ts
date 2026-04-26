@@ -8,7 +8,7 @@ import { DocumentCompletedEmailTemplate } from '@documenso/email/templates/docum
 import { prisma } from '@documenso/prisma';
 
 import { getI18nInstance } from '../../client-only/providers/i18n-server';
-import { NEXT_PUBLIC_WEBAPP_URL } from '../../constants/app';
+import { NEXT_PUBLIC_RECIPIENT_BASE_URL, NEXT_PUBLIC_WEBAPP_URL } from '../../constants/app';
 import { DOCUMENT_AUDIT_LOG_TYPE } from '../../types/document-audit-logs';
 import { extractDerivedDocumentEmailSettings } from '../../types/document-email';
 import type { RequestMetadata } from '../../universal/extract-request-metadata';
@@ -189,7 +189,7 @@ export const sendCompletedEmail = async ({ id, requestMetadata }: SendDocumentOp
         'document.name': envelope.title,
       };
 
-      const downloadLink = `${NEXT_PUBLIC_WEBAPP_URL()}/sign/${recipient.token}/complete`;
+      const downloadLink = `${NEXT_PUBLIC_RECIPIENT_BASE_URL()}/sign/${recipient.token}/complete`;
 
       const template = createElement(DocumentCompletedEmailTemplate, {
         documentName: envelope.title,
