@@ -6,6 +6,21 @@ export const APP_DOCUMENT_UPLOAD_SIZE_LIMIT =
 export const NEXT_PUBLIC_WEBAPP_URL = () =>
   env('NEXT_PUBLIC_WEBAPP_URL') ?? 'http://localhost:3000';
 
+/**
+ * Praxure-specific: base URL used in recipient signing emails.
+ *
+ * We host the embedded signing surface inside praxure.com so recipients
+ * never leave the parent brand. Set NEXT_PUBLIC_RECIPIENT_BASE_URL to
+ * `https://praxure.com` on the signing Railway service to route the
+ * `/sign/<token>` URLs in outgoing emails through praxure.com — that
+ * route iframes the Documenso signing UI behind a praxure-branded shell.
+ *
+ * Falls back to NEXT_PUBLIC_WEBAPP_URL when unset, preserving upstream
+ * behavior for any non-praxure deployments of this fork.
+ */
+export const NEXT_PUBLIC_RECIPIENT_BASE_URL = () =>
+  env('NEXT_PUBLIC_RECIPIENT_BASE_URL') ?? NEXT_PUBLIC_WEBAPP_URL();
+
 export const NEXT_PUBLIC_SIGNING_CONTACT_INFO = () =>
   env('NEXT_PUBLIC_SIGNING_CONTACT_INFO') ?? NEXT_PUBLIC_WEBAPP_URL();
 
