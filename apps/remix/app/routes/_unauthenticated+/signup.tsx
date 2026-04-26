@@ -1,57 +1,29 @@
-import { msg } from '@lingui/core/macro';
-import { redirect } from 'react-router';
+import { redirect } from "react-router";
 
-import {
-  IS_GOOGLE_SSO_ENABLED,
-  IS_MICROSOFT_SSO_ENABLED,
-  IS_OIDC_SSO_ENABLED,
-} from '@documenso/lib/constants/auth';
-import { env } from '@documenso/lib/utils/env';
-import { isValidReturnTo, normalizeReturnTo } from '@documenso/lib/utils/is-valid-return-to';
+import { appMetaTags } from "~/utils/meta";
 
-import { SignUpForm } from '~/components/forms/signup';
-import { appMetaTags } from '~/utils/meta';
-
-import type { Route } from './+types/signup';
+/**
+ * Praxure-internal: signup is permanently disabled.
+ *
+ * Recipients reach the signing surface via tokenized magic-link URLs
+ * (`/sign/<token>`) — they never need an account. The only login path
+ * we keep open is `/signin` for system administration. Any direct hit
+ * on `/signup` redirects to the signin page.
+ */
 
 export function meta() {
-  return appMetaTags(msg`Sign Up`);
+  return appMetaTags();
 }
 
-export function loader({ request }: Route.LoaderArgs) {
-  const NEXT_PUBLIC_DISABLE_SIGNUP = env('NEXT_PUBLIC_DISABLE_SIGNUP');
-
-  // SSR env variables.
-  const isGoogleSSOEnabled = IS_GOOGLE_SSO_ENABLED;
-  const isMicrosoftSSOEnabled = IS_MICROSOFT_SSO_ENABLED;
-  const isOIDCSSOEnabled = IS_OIDC_SSO_ENABLED;
-
-  if (NEXT_PUBLIC_DISABLE_SIGNUP === 'true') {
-    throw redirect('/signin');
-  }
-
-  let returnTo = new URL(request.url).searchParams.get('returnTo') ?? undefined;
-
-  returnTo = isValidReturnTo(returnTo) ? normalizeReturnTo(returnTo) : undefined;
-
-  return {
-    isGoogleSSOEnabled,
-    isMicrosoftSSOEnabled,
-    isOIDCSSOEnabled,
-    returnTo,
-  };
+export function loader() {
+  throw redirect("/signin");
 }
 
-export default function SignUp({ loaderData }: Route.ComponentProps) {
-  const { isGoogleSSOEnabled, isMicrosoftSSOEnabled, isOIDCSSOEnabled, returnTo } = loaderData;
-
-  return (
-    <SignUpForm
-      className="w-screen max-w-screen-2xl px-4 md:px-16 lg:-my-16"
-      isGoogleSSOEnabled={isGoogleSSOEnabled}
-      isMicrosoftSSOEnabled={isMicrosoftSSOEnabled}
-      isOIDCSSOEnabled={isOIDCSSOEnabled}
-      returnTo={returnTo}
-    />
-  );
+export function action() {
+  throw redirect("/signin");
 }
+
+export default function SignUpDisabled() {
+  return null;
+}
+
